@@ -1,0 +1,23 @@
+workspace:
+  base: /drone
+  path: src
+
+pipeline:
+  checkout-head:
+    image: plugins/git
+    commands:
+      - git fetch --no-tags origin "+refs/pull/$${DRONE_PULL_REQUEST}/head:"
+      - git checkout -qf FETCH_HEAD
+    when:
+      event: pull_request
+
+  test:
+    image: golang
+    commands:
+      - go build
+      - go test
+
+  when:
+    branch:
+      - release
+      - develop
